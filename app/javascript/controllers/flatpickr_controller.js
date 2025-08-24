@@ -6,10 +6,11 @@ export default class extends Controller {
   }
   connect() {
     console.log("Connecting flatpickr")
+    const container = document.getElementById("flatpickr-container")
     this.fp = flatpickr(this.element, {
       dateFormat: "Y-m-d",
       allowInput: true,
-      appendTo: this.element.parentElement,
+      appendTo: container,
     })
   }
 

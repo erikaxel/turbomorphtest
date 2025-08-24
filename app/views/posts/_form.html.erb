@@ -22,6 +22,11 @@
   </div>
 
   <div>
+    <%= form.label :available_on, style: "display: block" %>
+    <%= form.date_field :available_on, data: { controller: "flatpickr" } %>
+  </div>
+
+  <div>
     <%= form.submit %>
   </div>
 <% end %>

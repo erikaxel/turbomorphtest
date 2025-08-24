@@ -4,6 +4,14 @@
 
 <%= render @post %>
 
+<%= form_with(model: @post) do |form| %>
+  <div>
+    <%= form.label :available_on, style: "display: block" %>
+    <%= form.date_field :available_on, data: { controller: "flatpickr" } %>
+  </div>
+<% end %>
+
+
 <div>
   <%= link_to "Edit this post", edit_post_path(@post) %> |
   <%= link_to "Back to posts", posts_path %>

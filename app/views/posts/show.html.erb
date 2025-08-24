@@ -4,12 +4,22 @@
 
 <%= render @post %>
 
-<%= form_with(model: @post) do |form| %>
-  <div>
-    <%= form.label :available_on, style: "display: block" %>
-    <%= form.date_field :available_on, data: { controller: "flatpickr" } %>
-  </div>
-<% end %>
+<%#= form_with(model: @post) do |form| %>
+<!--  <div data-turbo-permanent>-->
+    <%#= form.label :available_on, style: "display: block" %>
+    <%#= form.date_field :available_on, data: { controller: "flatpickr" } %>
+<!--  </div>-->
+<%# end %>
+
+<div data-turbo-permanent>
+  <label for="standalone_date" style="display: block">Data permanent</label>
+  <input type="date" id="standalone_date" data-controller="flatpickr">
+</div>
+
+<div data-turbo-permanent>
+  <label for="standalone_date2" style="display: block">No data-permanent</label>
+  <input type="date" id="standalone_date2" data-controller="flatpickr">
+</div>
 
 
 <div>

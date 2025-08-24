@@ -6,13 +6,15 @@ export default class extends Controller {
   }
   connect() {
     console.log("Connecting flatpickr")
-    flatpickr(this.element, {
+    this.fp = flatpickr(this.element, {
       dateFormat: "Y-m-d",
-      allowInput: true
+      allowInput: true,
+      appendTo: this.element.parentElement,
     })
   }
 
   disconnect() {
     console.log("Disconnected")
+    this.fp.destroy();
   }
 }

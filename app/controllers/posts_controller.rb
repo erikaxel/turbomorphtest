@@ -17,6 +17,53 @@ class PostsController < ApplicationController
 
   # GET /posts/1/edit
   def edit
+    @turbo_action = params['turbo_action'] || params['post']['turbo_action']
+
+    @post.update(post_params) if params['post']
+
+
+    # For non-morph the Modal.show method will be called in the connect method in modal_controller.ts
+    # This will add another backdrop layer, so we need to manually remove that.
+    # For morhp methods, it will only be called the first time we insert the HTML.
+    respond_to do |format|
+      format.turbo_stream do
+        case @turbo_action
+        in 'replace'
+          # replace replaces the whole #element modal, so we wrap edit in a <div id="modals"> to ensure we keep the element
+          render turbo_stream: [
+            turbo_stream.action(:remove_backdrop, 'body'),
+            turbo_stream.replace("modals",
+                                 "<div id=\"modals\">#{render_to_string template: 'posts/edit'}</div>")
+          ]
+        in 'replace_morph'
+          render turbo_stream: [
+            turbo_stream.replace("modals",
+                                 "<div id=\"modals\">#{render_to_string template: 'posts/edit'}</div>",
+                                 method: :morph)
+
+          # Instead of calling open_modal we just set the `class: show` and `display: block` directly in the modal
+          # template.
+          # turbo_stream.action(:open_modal, "edit-modal")
+          ]
+        in 'update'
+          render turbo_stream: [
+            # Removing the backdrop can also be done in the modal connect method
+            turbo_stream.action(:remove_backdrop, 'body'),
+            turbo_stream.update("modals", template: "posts/edit")
+          ]
+        in 'update_morph'
+          render turbo_stream: [
+            turbo_stream.update("modals", template: "posts/edit", method: :morph),
+            # turbo_stream.action(:open_modal, "edit-modal")
+          ]
+        in 'update_inner_modal'
+          render turbo_stream: turbo_stream.update("edit-modal", partial: "posts/edit_inner_modal")
+        in 'update_inner_modal_morph'
+          render turbo_stream: turbo_stream.update("edit-modal", partial: "posts/edit_inner_modal", method: :morph)
+        end
+      end
+      format.html { render :edit }
+    end
   end
 
   # POST /posts or /posts.json
@@ -59,13 +106,14 @@ class PostsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_post
-      @post = Post.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def post_params
-      params.expect(post: [ :title, :content, :available_on, :user_id ])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_post
+    @post = Post.find(params.expect(:id))
+  end
+
+  # Only allow a list of trusted parameters through.
+  def post_params
+    params.expect(post: [:title, :content, :available_on, :user_id])
+  end
 end

@@ -6,26 +6,55 @@
 
 <%#= form_with(model: @post) do |form| %>
 <!--  <div data-turbo-permanent>-->
-    <%#= form.label :available_on, style: "display: block" %>
-    <%#= form.date_field :available_on, data: { controller: "flatpickr" } %>
+<%#= form.label :available_on, style: "display: block" %>
+<%#= form.date_field :available_on, data: { controller: "flatpickr" } %>
 <!--  </div>-->
 <%# end %>
 
-<div data-turbo-permanent>
-  <label for="standalone_date" style="display: block">Data permanent</label>
-  <input type="date" id="standalone_date" data-controller="flatpickr">
-</div>
+<!--<div data-turbo-permanent>-->
+<!--  <label for="standalone_date" style="display: block">Data permanent</label>-->
+<!--  <input type="date" id="standalone_date" data-controller="flatpickr">-->
+<!--</div>-->
 
-<div data-turbo-permanent>
-  <label for="standalone_date2" style="display: block">No data-permanent</label>
-  <input type="date" id="standalone_date2" data-controller="flatpickr">
-</div>
+<!--<div data-turbo-permanent>-->
+<!--  <label for="standalone_date2" style="display: block">No data-permanent</label>-->
+<!--  <input type="date" id="standalone_date2" data-controller="flatpickr">-->
+<!--</div>-->
 
-<div data-turbo-permanent id="flatpickr-container"></div>
+<!--<div data-turbo-permanent id="flatpickr-container"></div>-->
 
-<div>
-  <%= link_to "Edit this post", edit_post_path(@post) %> |
+<div data-turbo-prefetch="false">
+  Edit:
+  <ul>
+    <li>
+      <%= link_to "Edit this post", edit_post_path(@post) %>
+    </li>
+    <li>
+      <%= link_to "Edit with turbo (replace)",
+                  edit_post_path(@post, format: :turbo_stream, turbo_action: "replace") %>
+    </li>
+    <li>
+      <%= link_to "Edit with turbo (replace_morph)",
+                  edit_post_path(@post, format: :turbo_stream, turbo_action: "replace_morph") %>
+    </li>
+    <li>
+      <%= link_to "Edit with turbo (update)",
+                  edit_post_path(@post, format: :turbo_stream, turbo_action: "update") %>
+    </li>
+    <li>
+      <%= link_to "Edit with turbo (update_morph)",
+                  edit_post_path(@post, format: :turbo_stream, turbo_action: "update_morph") %>
+    </li>
+    <li>
+      <%= link_to "Edit with turbo (update)  - inner modal",
+                  edit_post_path(@post, format: :turbo_stream, turbo_action: "update_inner_modal") %>
+    </li>
+    <li>
+      <%= link_to "Edit with turbo (update_morph) - inner modal",
+                  edit_post_path(@post, format: :turbo_stream, turbo_action: "update_inner_modal_morph") %>
+    </li>
+  </ul>
+  Other:
   <%= link_to "Back to posts", posts_path %>
-
   <%= button_to "Destroy this post", @post, method: :delete %>
 </div>

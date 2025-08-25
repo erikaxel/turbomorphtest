@@ -1,32 +1,57 @@
-<%= form_with(model: post) do |form| %>
+<%= form_with(model: post, class: "row g-3", data: { controller: "turbo-form" }, id: 'edit_form') do |form| %>
   <% if post.errors.any? %>
-    <div style="color: red">
-      <h2><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>
-
-      <ul>
-        <% post.errors.each do |error| %>
-          <li><%= error.full_message %></li>
-        <% end %>
-      </ul>
+    <div class="col-12">
+      <div class="alert alert-danger">
+        <h4><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h4>
+        <ul class="mb-0">
+          <% post.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
     </div>
   <% end %>
 
-  <div>
-    <%= form.label :title, style: "display: block" %>
-    <%= form.text_field :title %>
+  <!-- Setting `autofocus` does not work, see readme for more info. -->
+  <div class="col-md-6">
+    <%= form.label :title, class: "form-label" %>
+    <!-- Changing this field will fetch an update from the server -->
+    <%= form.text_field :title, class: "form-control", data: { action: 'change->turbo-form#update' } %>
   </div>
 
-  <div>
-    <%= form.label :content, style: "display: block" %>
-    <%= form.textarea :content %>
+  <div class="col-md-6">
+    <%= form.label :available_on, class: "form-label" %>
+    <!--
+    Need to use data-turbo-permanent on flatpickr fields
+    -->
+    <div data-turbo-permanent>
+      <%= form.text_field :available_on, class: "form-control", data: { controller: "flatpickr" } %>
+    </div>
   </div>
 
-  <div>
-    <%= form.label :available_on, style: "display: block" %>
-    <%= form.date_field :available_on, data: { controller: "flatpickr" } %>
+  <div class="col-12">
+    <%= form.label :content, class: "form-label" %>
+    <%= form.textarea :content, class: "form-control", rows: 4 %>
   </div>
 
-  <div>
-    <%= form.submit %>
+  <div class="col-md-6">
+    <%= form.label :turbo_action, class: "form-label" %>
+    <%= form.select :turbo_action,
+                    options_for_select([
+                                         ['Replace', 'replace'],
+                                         ['Replace Morph', 'replace_morph'],
+                                         ['Update', 'update'],
+                                         ['Update Morph', 'update_morph'],
+                                         ['Update Inner Modal', 'update_inner_modal'],
+                                         ['Update Inner Modal Morph', 'update_inner_modal_morph']
+                                       ], @turbo_action),
+                    { prompt: 'Select turbo action' },
+                    { class: "form-select" } %>
+  </div>
+
+  <%= form.hidden_field :id, data: { autoreload_target: "postId" } %>
+
+  <div class="col-12">
+    <%= form.submit class: "btn btn-primary" %>
   </div>
 <% end %>

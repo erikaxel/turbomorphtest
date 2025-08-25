@@ -4,6 +4,6 @@ const application = Application.start()
 
 // Configure Stimulus development experience
 application.debug = false
-window.Stimulus   = application
+(window as any).Stimulus = application
 
 export { application }

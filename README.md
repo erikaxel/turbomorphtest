@@ -40,8 +40,19 @@ When using morphing:
       static values = {url: String}
 
       connect() {
-         // This will NOT work, since this.urlValue will be changed during morphing, but connect() is not called.
-         this.urlValue = "some default" if this.urlValue === ''
+         // This will NOT work, since this.urlValue will be changed during morphing, 
+         // but connect() is not called.
+         if(this.urlValue === '') {       
+           this.urlValue = "some default"
+         }
       } 
-  
+      
+      // Instead do this:
+      #calculatedUrlValue() {
+        if(this.urlValue === '') {       
+          return "some value"
+        } else {       
+          return this.urlValue
+        }
+      } 
   ```

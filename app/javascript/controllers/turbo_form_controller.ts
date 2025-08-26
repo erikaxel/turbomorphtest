@@ -8,8 +8,6 @@ export default class extends Controller {
   declare pendingUpdates: boolean
   declare isSubmitting: boolean
 
-  declare calculatedUrlValue: string
-
   initialize() {
     console.log("turboForm#initialize")
   }
@@ -23,14 +21,6 @@ export default class extends Controller {
     this.pendingUpdates = false
     this.isSubmitting = false
 
-    if (!this.hasUrlValue) {
-      let form = this.element
-      let method = (form.querySelector('input[name="_method"]'))?.value || form.method
-      this.urlValue = method == 'post' ? `${form.action}/new` : `${form.action}/edit`
-    }
-    // We cannot use this.urlValue directly, since it will be reset during morping. Instead, transfer it
-    // to this.calculatedUrlValue which will not be changed
-    this.calculatedUrlValue = this.urlValue
     this.element.addEventListener('turbo:submit-start', this.handleSubmitStart.bind(this))
     this.element.addEventListener('turbo:submit-end', this.handleSubmitEnd.bind(this))
   }
@@ -40,7 +30,7 @@ export default class extends Controller {
     console.log({
       hasUrlValue: this.hasUrlValue,
       urlValue: this.urlValue,
-      calculatedUrlValue: this.calculatedUrlValue,
+      formUrl: this.#formUrl(),
       pendingUpdates: this.pendingUpdates,
       isSubmitting: this.isSubmitting
     })
@@ -74,7 +64,7 @@ export default class extends Controller {
 
     // We hardcode in edit for this test, this is only needed for inner update morph
     // form.setAttribute('action', '1/edit')
-    form.setAttribute('action', this.calculatedUrlValue)
+    form.setAttribute('action', this.#formUrl())
     form.setAttribute('method', 'get')
     form.setAttribute('data-turbo-stream', 'true')
     form.querySelector('input[name="_method"]')?.remove()
@@ -122,5 +112,15 @@ export default class extends Controller {
 
     // Set the value to the name passed in
     input.value = name
+  }
+
+  #formUrl() :string {
+    if (this.hasUrlValue && this.urlValue != "") {
+      return this.urlValue
+    } else {
+      let form = this.element
+      let method = (form.querySelector('input[name="_method"]'))?.value || form.method
+      return method == 'post' ? `${form.action}/new` : `${form.action}/edit`
+    }
   }
 }
